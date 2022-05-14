@@ -41,7 +41,6 @@ export default class Storage {
   }
 
   static savedCategories(categoryToSave) {
-
     const savedCategories = Storage.getAllCategories();
 
     const existedItem = savedCategories.find((c) => c.id === categoryToSave.id);
@@ -57,30 +56,34 @@ export default class Storage {
     localStorage.setItem("category", JSON.stringify(savedCategories));
   }
 
-    static getAllProducts() {
-      const savedProducts = JSON.parse(localStorage.getItem("products")) || [];
+  static getAllProducts(sort = "newest") {
+    const savedProducts = JSON.parse(localStorage.getItem("products")) || [];
 
-      const sortedProducts = savedProducts.sort((a, b) => {
+    const sortedProducts = savedProducts.sort((a, b) => {
+      if (sort === "newest") {
         return new Date(a.createdAt) > new Date(b.createdAt) ? -1 : 1;
-      });
-
-      return sortedProducts;
-    }
-
-    static savedProducts(productsToSave) {
-      const savedProducts = Storage.getAllProducts();
-
-      const existedItem = savedProducts.find((c) => c.id === productsToSave.id);
-
-      if (existedItem) {
-        existedItem.title = productsToSave.title;
-        existedItem.category = productsToSave.category;
-        existedItem.quantity = productsToSave.quantity;
-      } else {
-        productsToSave.id = new Date().getTime();
-        productsToSave.createdAt = new Date().toISOString();
-        savedProducts.push(productsToSave);
+      } else if (sort === "oldest") {
+        return new Date(a.createdAt) > new Date(b.createdAt) ? 1 : -1;
       }
-      localStorage.setItem("products", JSON.stringify(savedProducts));
+    });
+
+    return sortedProducts;
+  }
+
+  static savedProducts(productsToSave) {
+    const savedProducts = Storage.getAllProducts();
+
+    const existedItem = savedProducts.find((c) => c.id === productsToSave.id);
+
+    if (existedItem) {
+      existedItem.title = productsToSave.title;
+      existedItem.category = productsToSave.category;
+      existedItem.quantity = productsToSave.quantity;
+    } else {
+      productsToSave.id = new Date().getTime();
+      productsToSave.createdAt = new Date().toISOString();
+      savedProducts.push(productsToSave);
     }
+    localStorage.setItem("products", JSON.stringify(savedProducts));
+  }
 }
