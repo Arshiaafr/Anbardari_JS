@@ -49,6 +49,14 @@ class ProductView {
     productTitle.value = "";
   }
 
+  deleteProduct(e) {
+    const productId = e.target.dataset.productId;
+    Storage.deleteProduct(productId);
+    this.products = Storage.getAllProducts();
+    this.createProductList(this.products);
+    console.log();
+  }
+
   setApp() {
     this.products = Storage.getAllProducts();
   }
@@ -61,11 +69,11 @@ class ProductView {
         (c) => c.id == product.category
       );
 
-      result += `<div class="flex flex-col gap-y-4 bg-slate-700 rounded-xl p-4 mb-3">
+      result += `<div class="flex flex-col gap-y-2 bg-slate-700 rounded-xl p-4 mb-3">
       <div class="flex justify-center items-center">
         <span class="flex-1">${product.title}</span>
       
-        <div class="flex justify-between items-center gap-x-2">
+        <div class="flex justify-between items-center gap-x-4">
           <span>${new Date().toLocaleDateString("fa-IR", {
             weekday: "long",
             year: "numeric",
@@ -78,7 +86,9 @@ class ProductView {
           <span class="bg-slate-500 flex justify-center items-center w-7 h-7 rounded-full border-2 border-slate-400 text-slate-300 font-bold">
             ${product.quantity}
           </span>
-          <button class="bg-red-500 rounded p-1" data-id=${product.id}>
+          <button class="bg-blue-900 border border-red-900 rounded p-2 delete-product" data-product-id=${
+            product.id
+          }>
             حذف
           </button>
         </div>
@@ -89,6 +99,12 @@ class ProductView {
     const ProductDOM = document.getElementById("products-list");
 
     ProductDOM.innerHTML = result;
+
+    const deleteBtns = [...document.querySelectorAll(".delete-product")];
+
+    deleteBtns.forEach((item) => {
+      item.addEventListener("click", (e) => this.deleteProduct(e));
+    });
   }
 }
 
